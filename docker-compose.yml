@@ -1,0 +1,64 @@
+version: '3'
+services:
+    nginx:
+        build:
+            dockerfile: ./docker/nginx.Dockerfile
+            context: .
+        image: rodrigosqr/nginx
+        container_name: nginx
+        ports:
+            - "8082:80"
+        networks: 
+            - iftm-network
+        depends_on: 
+            - "springboot1"
+            - "springboot2"
+            - "springboot3"
+
+    # mongodb:
+    #     image: mongo
+    #     networks: 
+    #         - iftm-network
+
+    springboot1:
+        build:
+            dockerfile: ./docker/springboot.Dockerfile
+            context: .
+        image: rodrigosqr/springboot
+        container_name: springboot-1
+        ports:
+            - "8081"
+        networks: 
+            - iftm-network
+        # depends_on:
+        #     - "mongodb"
+
+    springboot2:
+        build:
+            dockerfile: ./docker/springboot.Dockerfile
+            context: .
+        image: rodrigosqr/springboot
+        container_name: springboot-2
+        ports:
+            - "8081"
+        networks: 
+            - iftm-network
+        # depends_on:
+        #     - "mongodb"
+
+    springboot3:
+        build:
+            dockerfile: ./docker/springboot.Dockerfile
+            context: .
+        image: rodrigosqr/springboot
+        container_name: springboot-3
+        ports:
+            - "8081"
+        networks: 
+            - iftm-network
+        # depends_on:
+        #     - "mongodb"
+
+networks: 
+    iftm-network:
+        driver: bridge
