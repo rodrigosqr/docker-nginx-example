@@ -15,10 +15,16 @@ services:
             - "springboot2"
             - "springboot3"
 
-    # mongodb:
-    #     image: mongo
-    #     networks: 
-    #         - iftm-network
+    mysqldb:
+        image: mysql:latest
+        environment:
+            - MYSQL_ROOT_PASSWORD=root
+            - MYSQL_DATABASE=portalferias
+            - MYSQL_PASSWORD=root
+        networks: 
+            - iftm-network
+        ports:
+            - 3306:3306
 
     springboot1:
         build:
@@ -27,11 +33,15 @@ services:
         image: rodrigosqr/springboot
         container_name: springboot-1
         ports:
-            - "8081"
+            - "8081:8081"
         networks: 
             - iftm-network
-        # depends_on:
-        #     - "mongodb"
+        depends_on:
+            - "mysqldb"
+        environment:
+            - JDBC_DATABASE_URL=jdbc:mysql://mysqldb:3306/portalferias?createDatabaseIfNotExist=true&useSSL=false
+            - JDBC_DATABASE_USERNAME=root
+            - JDBC_DATABASE_PASSWORD=root
 
     springboot2:
         build:
@@ -40,11 +50,15 @@ services:
         image: rodrigosqr/springboot
         container_name: springboot-2
         ports:
-            - "8081"
+            - "8081:8081"
         networks: 
             - iftm-network
-        # depends_on:
-        #     - "mongodb"
+        depends_on:
+            - "mysqldb"
+        environment:
+            - JDBC_DATABASE_URL=jdbc:mysql://mysqldb:3306/portalferias?createDatabaseIfNotExist=true&useSSL=false
+            - JDBC_DATABASE_USERNAME=root
+            - JDBC_DATABASE_PASSWORD=root
 
     springboot3:
         build:
@@ -53,11 +67,15 @@ services:
         image: rodrigosqr/springboot
         container_name: springboot-3
         ports:
-            - "8081"
+            - "8081:8081"
         networks: 
             - iftm-network
-        # depends_on:
-        #     - "mongodb"
+        depends_on:
+            - "mysqldb"
+        environment:
+            - JDBC_DATABASE_URL=jdbc:mysql://mysqldb:3306/portalferias?createDatabaseIfNotExist=true&useSSL=false
+            - JDBC_DATABASE_USERNAME=root
+            - JDBC_DATABASE_PASSWORD=root
 
 networks: 
     iftm-network:
