@@ -7,7 +7,7 @@ services:
         image: rodrigosqr/nginx
         container_name: nginx
         ports:
-            - "8082:80"
+            - "80:80"
         networks: 
             - iftm-network
         depends_on: 
@@ -15,16 +15,18 @@ services:
             - "springboot2"
             - "springboot3"
 
-    mysqldb:
-        image: mysql:latest
+    postgresdb:
+        image: sameersbn/postgresql:9.6-2
+        container_name: postgresdb
         environment:
-            - MYSQL_ROOT_PASSWORD=root
-            - MYSQL_DATABASE=portalferias
-            - MYSQL_PASSWORD=root
+            - DB_NAME=portalferias
+            - DB_USER=user
+            - DB_PASS=user
+
         networks: 
             - iftm-network
         ports:
-            - 3306:3306
+            - "5432:5432"
 
     springboot1:
         build:
@@ -33,15 +35,16 @@ services:
         image: rodrigosqr/springboot
         container_name: springboot-1
         ports:
-            - "8081:8081"
+            - "8081"
         networks: 
             - iftm-network
-        depends_on:
-            - "mysqldb"
         environment:
-            - JDBC_DATABASE_URL=jdbc:mysql://mysqldb:3306/portalferias?createDatabaseIfNotExist=true&useSSL=false
-            - JDBC_DATABASE_USERNAME=root
-            - JDBC_DATABASE_PASSWORD=root
+            - JDBC_DATABASE_URL=jdbc:postgresql://postgresdb:5432/portalferias
+            - JDBC_DATABASE_USERNAME=user
+            - JDBC_DATABASE_PASSWORD=user
+            - FLYWAY_ENABLE=true
+        depends_on:
+            - "postgresdb"
 
     springboot2:
         build:
@@ -50,15 +53,17 @@ services:
         image: rodrigosqr/springboot
         container_name: springboot-2
         ports:
-            - "8081:8081"
+            - "8081"
         networks: 
             - iftm-network
-        depends_on:
-            - "mysqldb"
         environment:
-            - JDBC_DATABASE_URL=jdbc:mysql://mysqldb:3306/portalferias?createDatabaseIfNotExist=true&useSSL=false
-            - JDBC_DATABASE_USERNAME=root
-            - JDBC_DATABASE_PASSWORD=root
+            - JDBC_DATABASE_URL=jdbc:postgresql://postgresdb:5432/portalferias
+            - JDBC_DATABASE_USERNAME=user
+            - JDBC_DATABASE_PASSWORD=user
+            - FLYWAY_ENABLE=false
+        depends_on:
+            - "postgresdb"
+
 
     springboot3:
         build:
@@ -67,15 +72,16 @@ services:
         image: rodrigosqr/springboot
         container_name: springboot-3
         ports:
-            - "8081:8081"
+            - "8081"
         networks: 
             - iftm-network
-        depends_on:
-            - "mysqldb"
         environment:
-            - JDBC_DATABASE_URL=jdbc:mysql://mysqldb:3306/portalferias?createDatabaseIfNotExist=true&useSSL=false
-            - JDBC_DATABASE_USERNAME=root
-            - JDBC_DATABASE_PASSWORD=root
+            - JDBC_DATABASE_URL=jdbc:postgresql://postgresdb:5432/portalferias
+            - JDBC_DATABASE_USERNAME=user
+            - JDBC_DATABASE_PASSWORD=user
+            - FLYWAY_ENABLE=false
+        depends_on:
+            - "postgresdb"
 
 networks: 
     iftm-network:
