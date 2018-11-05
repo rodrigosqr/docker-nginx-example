@@ -7,7 +7,7 @@ services:
         image: rodrigosqr/nginx
         container_name: nginx
         ports:
-            - "80"
+            - "80:80"
         networks: 
             - iftm-network
         depends_on: 

@@ -1,16 +1,6 @@
 #!/bin/bash
-echo "DOCKER TOPPER"
-JARFILE=../docker/app/portalferias.jar
+echo "EXECUNTANDO O DOCKER-COMPOSE"
+sudo docker-compose up --force-recreate
 
-cd portalferias
-chmod +x mvnw
-./mvnw clean package -Dmaven.test.skip=true 
-
-echo "COPIANDO JAR PARA O DIRETORIO '../docker/app'"
-cp target/portalferias.jar $JARFILE
-cd ..
-
-sudo docker-compose build
-echo "PRONTO"
 
 
