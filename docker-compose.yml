@@ -7,7 +7,7 @@ services:
         image: rodrigosqr/nginx
         container_name: nginx
         ports:
-            - "80:80"
+            - "80"
         networks: 
             - iftm-network
         depends_on: 
@@ -26,7 +26,7 @@ services:
         networks: 
             - iftm-network
         ports:
-            - "5432:5432"
+            - "5432"
 
     springboot1:
         build:
@@ -42,7 +42,7 @@ services:
             - JDBC_DATABASE_URL=jdbc:postgresql://postgresdb:5432/portalferias
             - JDBC_DATABASE_USERNAME=user
             - JDBC_DATABASE_PASSWORD=user
-            - FLYWAY_ENABLE=true
+            - FLYWAY_ENABLED=true
         depends_on:
             - "postgresdb"
 
@@ -60,7 +60,7 @@ services:
             - JDBC_DATABASE_URL=jdbc:postgresql://postgresdb:5432/portalferias
             - JDBC_DATABASE_USERNAME=user
             - JDBC_DATABASE_PASSWORD=user
-            - FLYWAY_ENABLE=false
+            - FLYWAY_ENABLED=false
         depends_on:
             - "postgresdb"
 
@@ -79,7 +79,7 @@ services:
             - JDBC_DATABASE_URL=jdbc:postgresql://postgresdb:5432/portalferias
             - JDBC_DATABASE_USERNAME=user
             - JDBC_DATABASE_PASSWORD=user
-            - FLYWAY_ENABLE=false
+            - FLYWAY_ENABLED=false
         depends_on:
             - "postgresdb"
 
