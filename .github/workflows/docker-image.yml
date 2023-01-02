@@ -14,18 +14,16 @@ jobs:
 
     steps:
     
-      - uses: actions/checkout@v3    
+      - uses: actions/checkout@v3
+      - name: Create target
+        run: mkdir -p docker/app && mkdir -p portalferias/target
+        
       - uses: actions/setup-java@v3
         with:
           distribution: zulu
           java-version: 8
 #       - name: Setup Gradle
 #         uses: gradle/gradle-build-action@v2
-      - name: Cache Target
-        uses: actions/cache@v3
-        with:
-          path: |
-            portalferias/target
             
       - name: Cache Maven packages
         uses: actions/cache@v3
@@ -46,7 +44,7 @@ jobs:
 #           ./gradlew bootJar
 
       - name: Copy Jar file
-        run: mkdir -p docker/app && mv portalferias/target/$(ls portalferias/target) docker/app/portalferias.jar
+        run: mv portalferias/target/$(ls portalferias/target) docker/app/portalferias.jar
 
       - uses: actions/upload-artifact@master
         with:
