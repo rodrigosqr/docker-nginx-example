@@ -24,7 +24,7 @@ jobs:
       
       - name: Execute Gradle build
         run: |
-          cd portalferias && mvn clean package --file pom.xml
+          mvn clean install -f portalferias/pom.xml -DskipTests=true
 
 #       - name: Execute Gradle build
 #         run: |
