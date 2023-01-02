@@ -32,7 +32,7 @@ jobs:
 #           ./gradlew bootJar
 
       - name: Copy Jar file
-        run: mv portalferias/target/$(ls portalferias/target) docker/app/portalferias.jar
+        run: mkdir -p docker/app && mv portalferias/target/$(ls portalferias/target) docker/app/portalferias.jar
 
       - uses: actions/upload-artifact@master
         with:
