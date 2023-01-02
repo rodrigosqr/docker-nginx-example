@@ -15,4 +15,4 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build ./docker --file springboot.Dockerfile --tag springboot:$(date +%s)
+      run: docker build . --file docker/springboot.Dockerfile --tag springboot:$(date +%s)
