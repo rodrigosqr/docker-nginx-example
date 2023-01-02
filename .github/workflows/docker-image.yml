@@ -21,7 +21,12 @@ jobs:
           java-version: 8
 #       - name: Setup Gradle
 #         uses: gradle/gradle-build-action@v2
-      
+      - name: Cache Target
+        uses: actions/cache@v3
+        with:
+          path: |
+            portalferias/target
+            
       - name: Cache Maven packages
         uses: actions/cache@v3
         with:
