@@ -32,7 +32,7 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
       - name: Execute Gradle build
         run: |
-          mvn clean install -f portalferias/pom.xml -DskipTests=true && ls -la portalferias 
+          mvn clean install -f portalferias/pom.xml -DskipTests=true
 
 #       - name: Execute Gradle build
 #         run: |
@@ -40,12 +40,12 @@ jobs:
 #           ./gradlew bootJar
 
       - name: Copy Jar file
-        run: ls -la portalferias && mv portalferias/target/portalferias.jar docker/app/portalferias.jar
+        run: mv portalferias/target/portalferias.jar app.jar
 
       - uses: actions/upload-artifact@master
         with:
           name: jar-file
-          path: docker/app/portalferias.jar
+          path: app.jar
   
   build-image:
 
@@ -59,7 +59,7 @@ jobs:
       - uses: actions/download-artifact@master
         with:
           name: jar-file
-          path: docker/app/portalferias.jar
+          path: app.jar
 
       - uses: actions/checkout@v3
       - name: Build the Docker image
