@@ -14,7 +14,7 @@ jobs:
 
     steps:
     
-#       - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 #       - name: Create target
 #         run: mkdir -p docker/app && mkdir -p portalferias/target
         
@@ -38,7 +38,7 @@ jobs:
 #         run: |
 #           chmod +x ./gradlew
 #           ./gradlew bootJar
-
+      - uses: actions/checkout@v3
       - name: Copy Jar file
         run: mv portalferias/target/$(ls portalferias/target) portalferias.jar
 
