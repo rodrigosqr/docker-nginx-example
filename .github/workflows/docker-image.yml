@@ -14,9 +14,9 @@ jobs:
 
     steps:
     
-      - uses: actions/checkout@v3
-      - name: Create target
-        run: mkdir -p docker/app && mkdir -p portalferias/target
+#       - uses: actions/checkout@v3
+#       - name: Create target
+#         run: mkdir -p docker/app && mkdir -p portalferias/target
         
       - uses: actions/setup-java@v3
         with:
@@ -24,16 +24,12 @@ jobs:
           java-version: 8
 #       - name: Setup Gradle
 #         uses: gradle/gradle-build-action@v2
-            
       - name: Cache Maven packages
-        uses: actions/cache@v3
+        uses: actions/cache@v1
         with:
-          path: |
-            ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-            
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
       - name: Execute Gradle build
         run: |
           mvn clean install -f portalferias/pom.xml -DskipTests=true
