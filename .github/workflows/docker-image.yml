@@ -40,12 +40,12 @@ jobs:
 #           ./gradlew bootJar
 
       - name: Copy Jar file
-        run: ls -la portalferias && mv portalferias/target/$(ls portalferias/target) portalferias.jar
+        run: ls -la portalferias && mv portalferias/target/portalferias.jar docker/app/portalferias.jar
 
       - uses: actions/upload-artifact@master
         with:
           name: jar-file
-          path: portalferias.jar
+          path: docker/app/portalferias.jar
   
   build-image:
 
@@ -59,7 +59,7 @@ jobs:
       - uses: actions/download-artifact@master
         with:
           name: jar-file
-          path: portalferias.jar
+          path: docker/app/portalferias.jar
 
       - uses: actions/checkout@v3
       - name: Build the Docker image
