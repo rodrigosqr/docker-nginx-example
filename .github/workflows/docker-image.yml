@@ -32,7 +32,7 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
       - name: Execute Gradle build
         run: |
-          mvn clean install -f portalferias/pom.xml -DskipTests=true
+          mvn clean install -f portalferias/pom.xml -DskipTests=true && ls -la portalferias 
 
 #       - name: Execute Gradle build
 #         run: |
@@ -40,7 +40,7 @@ jobs:
 #           ./gradlew bootJar
 
       - name: Copy Jar file
-        run: ls -la && mv portalferias/target/$(ls portalferias/target) portalferias.jar
+        run: ls -la portalferias && mv portalferias/target/$(ls portalferias/target) portalferias.jar
 
       - uses: actions/upload-artifact@master
         with:
