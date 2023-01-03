@@ -61,7 +61,6 @@ jobs:
           name: jar-file
           path: app.jar
 
-      - uses: actions/checkout@v3
       - name: Build the Docker image
         run: ls -la && docker build . --file docker/springboot.Dockerfile --tag springboot:$(date +%s)
 #       - name: Set up QEMU
