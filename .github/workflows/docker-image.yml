@@ -15,95 +15,102 @@ jobs:
     steps:
     
       - uses: actions/checkout@v3
-        
-      - uses: actions/setup-java@v3
-        with:
-          distribution: zulu
-          java-version: 8
-      - name: Cache Maven packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
-      - name: Execute Gradle build
-        run: |
-          mvn clean install -f portalferias/pom.xml -DskipTests=true
-
-      - name: Copy Jar file
-        run: mv portalferias/target/portalferias.jar app.jar
-
-      - uses: actions/upload-artifact@master
-        with:
-          name: jar-file
-          path: app.jar
-  
-  build-image:
-
-    runs-on: ubuntu-latest
-    needs: build
-
-    steps:
       
-      - uses: actions/checkout@v3
-
-      - uses: actions/download-artifact@master
-        with:
-          name: jar-file
-          path: app.jar
-          
-#       - name: Log in to GHCR
-#         env:
-#             REGISTRY: ghcr.io #create env called REGISTRY
-#         uses: docker/login-action@v2
+      - name: print to GCR
+        env:
+          SA_GCP: ${{ secrets.SA_GCP }}
+        run: echo  $SA_GCP
+        
+#       - uses: actions/setup-java@v3
 #         with:
-#             registry: ${{ env.REGISTRY }} #parse REGISTRY env value to here. Make sure it is correctly stating ghcr.io
-#             username: ${{ github.actor }} #this will be our github account
-#             password: ${{ secrets.CR_PAT }} #parse the value of repository secret called CR_PAT that we have created earlier
+#           distribution: zulu
+#           java-version: 8
+#       - name: Cache Maven packages
+#         uses: actions/cache@v3
+#         with:
+#           path: ~/.m2
+#           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+#           restore-keys: ${{ runner.os }}-m2
+#       - name: Execute Gradle build
+#         run: |
+#           mvn clean install -f portalferias/pom.xml -DskipTests=true
+
+#       - name: Copy Jar file
+#         run: mv portalferias/target/portalferias.jar app.jar
+
+#       - uses: actions/upload-artifact@master
+#         with:
+#           name: jar-file
+#           path: app.jar
+  
+#   build-image:
+
+#     runs-on: ubuntu-latest
+#     needs: build
+
+#     steps:
+      
+#       - uses: actions/checkout@v3
+
+#       - uses: actions/download-artifact@master
+#         with:
+#           name: jar-file
+#           path: app.jar
+          
+# #       - name: Log in to GHCR
+# #         env:
+# #             REGISTRY: ghcr.io #create env called REGISTRY
+# #         uses: docker/login-action@v2
+# #         with:
+# #             registry: ${{ env.REGISTRY }} #parse REGISTRY env value to here. Make sure it is correctly stating ghcr.io
+# #             username: ${{ github.actor }} #this will be our github account
+# #             password: ${{ secrets.CR_PAT }} #parse the value of repository secret called CR_PAT that we have created earlier
             
-      - name: Login to GCR
-        run: echo  ${{ secrets.SA_GCP }}
+#       - name: print to GCR
+#         env:
+#           SA_GCP: ${{ secrets.SA_GCP }}
+#         run: echo  $SA_GCP
         
-      - name: Login to GCR
-        env:
-          PROJECT_ID: g2w-tecnologia #create env called PROJECT_ID consisted of our actual GCP Project ID
-        uses: google-github-actions/setup-gcloud@v0.3.0 #checkouts GCR repo, so this workflow can access it
-        with:
-          service_account_key: ${{ secrets.SA_GCP }} #parse the value of repository secret called SERVICE_ACCOUNT_KEY that we have created earlier
-          project_id: ${{ env.PROJECT_ID }} #parse the value of env called PROJECT_ID
-          export_default_credentials: true
-          
-      - name: Build Docker Image
-        env:
-          IMAGE_NAME: teste/springboot #create env called IMAGE_NAME consisted of actual name of Docker Image after we build
-          PROJECT_ID: g2w-tecnologia
-        run: docker build -t $IMAGE_NAME:latest . --file docker/springboot.Dockerfile #build the docker image
-        
-      - name: Configure Docker Client
-        run:  |-
-          gcloud auth configure-docker --quiet #authenticate to gcr
-        
-      - name: Push Docker Image to Container Registry GCR
-        env: 
-          IMAGE_NAME: teste/springboot
-          PROJECT_ID: g2w-tecnologia
-        #tag docker image to gcr image format then push to gcr
-        run: |-
-          docker tag $IMAGE_NAME:latest gcr.io/$PROJECT_ID/$IMAGE_NAME:latest 
-          docker push gcr.io/$PROJECT_ID/$IMAGE_NAME:latest 
-
-#       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+#       - name: Login to GCR
+#         env:
+#           PROJECT_ID: g2w-tecnologia #create env called PROJECT_ID consisted of our actual GCP Project ID
+#         uses: google-github-actions/setup-gcloud@v0.3.0 #checkouts GCR repo, so this workflow can access it
 #         with:
-#           service_account_key: ${{ secrets.SA_GCP }}
-#           project_id: g2w-tecnologia
+#           service_account_key: ${{ secrets.SA_GCP }} #parse the value of repository secret called SERVICE_ACCOUNT_KEY that we have created earlier
+#           project_id: ${{ env.PROJECT_ID }} #parse the value of env called PROJECT_ID
 #           export_default_credentials: true
           
-#       - name: Login to GCR
-#         uses: docker/login-action@v2
-#         with:
-#           registry: gcr.io
-#           username: _json_key
-#           password: ${{ secrets.SA_GCP }}
+#       - name: Build Docker Image
+#         env:
+#           IMAGE_NAME: teste/springboot #create env called IMAGE_NAME consisted of actual name of Docker Image after we build
+#           PROJECT_ID: g2w-tecnologia
+#         run: docker build -t $IMAGE_NAME:latest . --file docker/springboot.Dockerfile #build the docker image
+        
+#       - name: Configure Docker Client
+#         run:  |-
+#           gcloud auth configure-docker --quiet #authenticate to gcr
+        
+#       - name: Push Docker Image to Container Registry GCR
+#         env: 
+#           IMAGE_NAME: teste/springboot
+#           PROJECT_ID: g2w-tecnologia
+#         #tag docker image to gcr image format then push to gcr
+#         run: |-
+#           docker tag $IMAGE_NAME:latest gcr.io/$PROJECT_ID/$IMAGE_NAME:latest 
+#           docker push gcr.io/$PROJECT_ID/$IMAGE_NAME:latest 
 
-#       - name: Build the Docker image
-#         run: docker build . --file docker/springboot.Dockerfile --tag gcr.io/g2w-tecnologia/teste/springboot:1 && docker push gcr.io/g2w-tecnologia/teste/springboot:1
+# #       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+# #         with:
+# #           service_account_key: ${{ secrets.SA_GCP }}
+# #           project_id: g2w-tecnologia
+# #           export_default_credentials: true
+          
+# #       - name: Login to GCR
+# #         uses: docker/login-action@v2
+# #         with:
+# #           registry: gcr.io
+# #           username: _json_key
+# #           password: ${{ secrets.SA_GCP }}
+
+# #       - name: Build the Docker image
+# #         run: docker build . --file docker/springboot.Dockerfile --tag gcr.io/g2w-tecnologia/teste/springboot:1 && docker push gcr.io/g2w-tecnologia/teste/springboot:1
