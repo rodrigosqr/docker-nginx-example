@@ -1,136 +1,136 @@
-name: Show Me the S3cr3tz
-on: [push]
+# name: Show Me the S3cr3tz
+# on: [push]
+
+# jobs:
+#   debug:
+#     name: Debug
+#     runs-on: ubuntu-latest
+
+#     steps:
+#     - name: Check out code
+#       uses: actions/checkout@v2
+
+#     - name: Set up secret file
+#       env:
+#         DEBUG_PASSWORD: ${{ secrets.SA_GCP }}
+#       run: |
+#         echo $DEBUG_PASSWORD >> secrets.txt
+
+#     - name: Run tmate
+#       uses: mxschmitt/action-tmate@v2
+name: Docker CI with Gradle
+
+on:
+  push:
+    branches: [ "master" ]
+
+permissions:
+  contents: read
 
 jobs:
-  debug:
-    name: Debug
+  build:
+
     runs-on: ubuntu-latest
 
     steps:
-    - name: Check out code
-      uses: actions/checkout@v2
-
-    - name: Set up secret file
-      env:
-        DEBUG_PASSWORD: ${{ secrets.SA_GCP }}
-      run: |
-        echo $DEBUG_PASSWORD >> secrets.txt
-
-    - name: Run tmate
-      uses: mxschmitt/action-tmate@v2
-# name: Docker CI with Gradle
-
-# on:
-#   push:
-#     branches: [ "master" ]
-
-# permissions:
-#   contents: read
-
-# jobs:
-#   build:
-
-#     runs-on: ubuntu-latest
-
-#     steps:
     
-#       - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
       
-#       - name: print to GCR
-#         env:
-#           SA_GCP: ${{ secrets.SA_GCP }}
-#         run: echo  $SA_GCP
+      - name: print to GCR
+        env:
+          SA_GCP: ${{ secrets.SA_GCP }}
+        run: echo  $SA_GCP
         
-#       - uses: actions/setup-java@v3
-#         with:
-#           distribution: zulu
-#           java-version: 8
-#       - name: Cache Maven packages
-#         uses: actions/cache@v3
-#         with:
-#           path: ~/.m2
-#           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-#           restore-keys: ${{ runner.os }}-m2
-#       - name: Execute Gradle build
-#         run: |
-#           mvn clean install -f portalferias/pom.xml -DskipTests=true
+      - uses: actions/setup-java@v3
+        with:
+          distribution: zulu
+          java-version: 8
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Execute Gradle build
+        run: |
+          mvn clean install -f portalferias/pom.xml -DskipTests=true
 
-#       - name: Copy Jar file
-#         run: mv portalferias/target/portalferias.jar app.jar
+      - name: Copy Jar file
+        run: mv portalferias/target/portalferias.jar app.jar
 
-#       - uses: actions/upload-artifact@master
-#         with:
-#           name: jar-file
-#           path: app.jar
+      - uses: actions/upload-artifact@master
+        with:
+          name: jar-file
+          path: app.jar
   
-#   build-image:
+  build-image:
 
-#     runs-on: ubuntu-latest
-#     needs: build
+    runs-on: ubuntu-latest
+    needs: build
 
-#     steps:
+    steps:
       
-#       - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-#       - uses: actions/download-artifact@master
-#         with:
-#           name: jar-file
-#           path: app.jar
+      - uses: actions/download-artifact@master
+        with:
+          name: jar-file
+          path: app.jar
           
-# #       - name: Log in to GHCR
-# #         env:
-# #             REGISTRY: ghcr.io #create env called REGISTRY
-# #         uses: docker/login-action@v2
-# #         with:
-# #             registry: ${{ env.REGISTRY }} #parse REGISTRY env value to here. Make sure it is correctly stating ghcr.io
-# #             username: ${{ github.actor }} #this will be our github account
-# #             password: ${{ secrets.CR_PAT }} #parse the value of repository secret called CR_PAT that we have created earlier
-            
-#       - name: print to GCR
+#       - name: Log in to GHCR
 #         env:
-#           SA_GCP: ${{ secrets.SA_GCP }}
-#         run: echo  $SA_GCP
-        
-#       - name: Login to GCR
-#         env:
-#           PROJECT_ID: g2w-tecnologia #create env called PROJECT_ID consisted of our actual GCP Project ID
-#         uses: google-github-actions/setup-gcloud@v0.3.0 #checkouts GCR repo, so this workflow can access it
+#             REGISTRY: ghcr.io #create env called REGISTRY
+#         uses: docker/login-action@v2
 #         with:
-#           service_account_key: ${{ secrets.SA_GCP }} #parse the value of repository secret called SERVICE_ACCOUNT_KEY that we have created earlier
-#           project_id: ${{ env.PROJECT_ID }} #parse the value of env called PROJECT_ID
+#             registry: ${{ env.REGISTRY }} #parse REGISTRY env value to here. Make sure it is correctly stating ghcr.io
+#             username: ${{ github.actor }} #this will be our github account
+#             password: ${{ secrets.CR_PAT }} #parse the value of repository secret called CR_PAT that we have created earlier
+            
+      - name: print to GCR
+        env:
+          SA_GCP: ${{ secrets.SA_GCP }}
+        run: echo  $SA_GCP
+        
+      - name: Login to GCR
+        env:
+          PROJECT_ID: g2w-tecnologia #create env called PROJECT_ID consisted of our actual GCP Project ID
+        uses: google-github-actions/setup-gcloud@v0.3.0 #checkouts GCR repo, so this workflow can access it
+        with:
+          service_account_key: ewogICJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsCiAgInByb2plY3RfaWQiOiAiZzJ3LXRlY25vbG9naWEiLAogICJwcml2YXRlX2tleV9pZCI6ICI1MTk5MDlhMTQxYWMxZjRhZGU4MzNmNmMzNTcwNjM1OWQ3OGU4NTU0IiwKICAicHJpdmF0ZV9rZXkiOiAiLS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tXG5NSUlFdlFJQkFEQU5CZ2txaGtpRzl3MEJBUUVGQUFTQ0JLY3dnZ1NqQWdFQUFvSUJBUURUdytpSG1PNE0xM2dKXG53bVh1QzRnb2hKaFRyZ2JEWGNUdGN0RklxN0pNOUdDZmhIVHBKaHdNS2NEdFFXSzRXdElzMEpST2Z0dEJvV1VwXG45MGhFdjZPRGxQek0zbmIxVVJWcTh3bzB5NkJkUnlMQng4eTFxa2tCdDcyN0JWLytzTmt5blpHeGwvdnJZOW1nXG4yWWRkbTFwNlU2S2F6ZHVHbFBsalJuNkxrcnhFRUYwV3d3Q2lBZnBZbTRCRFhQZzlTNXFNUWdDYkxRME5BeG5qXG5IUVM2eUdqY2JCUEE1Sk5ySU9uUFhMVkdRc0kvaDc4ZzVwcVNlWU9MVlJ4dlJVM3JTcHM0SThpRVU2aDE3WDlPXG54NEJJU0NtN3hrL0dWUW9LWDBjZ1Y5UkdacE5Eem1iMVdMV3d5V1BZenNHeDJIaEc4TGxQYU1hUnJ3YTJkcUNEXG5ZZG14WXBPMUFnTUJBQUVDZ2dFQURWd0tJdWZRZU1udEhqeC8zclVtaVZ2WUdrdGJ6TjV4Q29QWVZTdlR5MHdOXG5mbkxHUjJFcW1zL1Zob0k5L3FCb0t3Q2JvcG9aTGZwSEhnOG1KWVFyaGlVVGo3OG5KUkhROXBiUG1ZWVJIMkZaXG4vWHlqMndBYnEvcVNBeWJ6SitlelJDQ3hyTkVJU1JEYkRXMDd2M21LQ3phVWh3eWVvVTVycjBvbXVKcHd1eUJwXG5ydWE0a094K0ZtVVlZNmg0c2ZlU2ZTczRVTi9PM1ZRTXo1RDRXQXVuSlF0Q2JCV0Q2TUNhOXE4R3BYM1djb2dEXG4wa2NQK3haMjVwQmFZZVU4UmplZ1kzNXlMamJrckJhQnE0eXI0dks3bm5XYUdkSHBQL3RnK3V1VGgxeEw2aXBoXG5RdDJERGZ2Y3M1cHAweGdyUno0eGthWWduVFZwN3lRblBseUxlWTZucndLQmdRRDc3YVVCdmIwVEJEdVBKSTI5XG52VDBScVBEbW1DN25zZ0JNWitvT2JNaVJmQndWQ1RsTnpDcTdCWnYzU05nR0FEZWppZXdOcjZHcHJ2UFlQdzRwXG5vS0VZTlA2UG92bGNVUjZFTUhYblJ2YSs5T2tYM01zRmtRbno4WGsyN0YxRnBJU1licVV6RjhFV2NGUXNNeGE4XG5PMVUrTVVaMHRGcFZWUmhwSHRHYjJmUlFRd0tCZ1FEWE1CYkExME5ER1ZzSVlzWHJQNzBGdXc2aU1jdUxTNGxuXG5Yd281dzIxVTN6QTdyM2dCRjVPNFFsYS93T1NmN1kxeVdZaER3R3VPb1BRemZHM2Q1TkFzU2VXZklNQ1A0aHljXG5NZFV0YWtycFd6UzhYQll5RFY4TVpHelg3aGZXUHlSeG1sL05UVmZEUFlBcE95U0lXV2k0UllCeko5anczN1RRXG4ydzZBcFExb3B3S0JnSE5DcHR2RkUxdy84My9xR1c5VnhUcnZNRWhRR0NXcEtybktVU3VJV2JzMkxTTHl0V1VDXG5wQW9zNXM2Y1pUbFpvQnNTWHcxajdYTFV1SHVYWGNOdDJrWlkrSjUrMGRlS3hZdDFJSHhQMjFSQ2VPS1NBZERxXG5Lc09SRndRcDRBS2M0bzFiRWZudVJFa2YyMkxkZk9saHUvNVlUUVBYLy94S2tvQ0Z1U0MwOXpKQkFvR0JBSTV1XG4yekNyaTI3M2NvVDdkQXZCdGFqOFpyUS9CMzVjOGtjRTVtelRpU09iVTM2K0owMTV3S0krN3RLZnAvU2Z0WGRTXG5BZHJ1bTRMZDBLWGZuNDAzTGYrU3JqV0U1VkNYbHQ1Z01iMk0xS2JmWXVtbWZsNkU4VHZ2b1FmUUplRC9ERzFSXG5oRVlOQXFGTnJPNGRvcEhKdElIOEp3aVNBSXQzVjJURENqZG1pSmlUQW9HQVRtblJSNTcvQTJzcWU3ZUtLVDNnXG5SZ0xVdU5SZTJpWGMwcWdPYW9MR1g2M0ovK0RRMGhqS2tpY0RJVDl3RGdhMkFtTnRLcUZFN3BLZG1DYlFNK29CXG41emE0UUozV3l2aEwzMm1YUDRPL0lYaHBJMGtBUmN2VFNCZEdJMkZOSUJlZ24wZjk0eFBQOTM3T05pcURQVVNQXG5FTmowVHY0V1RqK204NlEwUFlxaFZWZz1cbi0tLS0tRU5EIFBSSVZBVEUgS0VZLS0tLS1cbiIsCiAgImNsaWVudF9lbWFpbCI6ICJnaXRodWJAZzJ3LXRlY25vbG9naWEuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLAogICJjbGllbnRfaWQiOiAiMTA5OTY0NDg3NzI1NDc5MDgyMjk2IiwKICAiYXV0aF91cmkiOiAiaHR0cHM6Ly9hY2NvdW50cy5nb29nbGUuY29tL28vb2F1dGgyL2F1dGgiLAogICJ0b2tlbl91cmkiOiAiaHR0cHM6Ly9vYXV0aDIuZ29vZ2xlYXBpcy5jb20vdG9rZW4iLAogICJhdXRoX3Byb3ZpZGVyX3g1MDlfY2VydF91cmwiOiAiaHR0cHM6Ly93d3cuZ29vZ2xlYXBpcy5jb20vb2F1dGgyL3YxL2NlcnRzIiwKICAiY2xpZW50X3g1MDlfY2VydF91cmwiOiAiaHR0cHM6Ly93d3cuZ29vZ2xlYXBpcy5jb20vcm9ib3QvdjEvbWV0YWRhdGEveDUwOS9naXRodWIlNDBnMnctdGVjbm9sb2dpYS5pYW0uZ3NlcnZpY2VhY2NvdW50LmNvbSIKfQ== #parse the value of repository secret called SERVICE_ACCOUNT_KEY that we have created earlier
+          project_id: ${{ env.PROJECT_ID }} #parse the value of env called PROJECT_ID
+          export_default_credentials: true
+          
+      - name: Build Docker Image
+        env:
+          IMAGE_NAME: teste/springboot #create env called IMAGE_NAME consisted of actual name of Docker Image after we build
+          PROJECT_ID: g2w-tecnologia
+        run: docker build -t $IMAGE_NAME:latest . --file docker/springboot.Dockerfile #build the docker image
+        
+      - name: Configure Docker Client
+        run:  |-
+          gcloud auth configure-docker --quiet #authenticate to gcr
+        
+      - name: Push Docker Image to Container Registry GCR
+        env: 
+          IMAGE_NAME: teste/springboot
+          PROJECT_ID: g2w-tecnologia
+        #tag docker image to gcr image format then push to gcr
+        run: |-
+          docker tag $IMAGE_NAME:latest gcr.io/$PROJECT_ID/$IMAGE_NAME:latest 
+          docker push gcr.io/$PROJECT_ID/$IMAGE_NAME:latest 
+
+#       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+#         with:
+#           service_account_key: ${{ secrets.SA_GCP }}
+#           project_id: g2w-tecnologia
 #           export_default_credentials: true
           
-#       - name: Build Docker Image
-#         env:
-#           IMAGE_NAME: teste/springboot #create env called IMAGE_NAME consisted of actual name of Docker Image after we build
-#           PROJECT_ID: g2w-tecnologia
-#         run: docker build -t $IMAGE_NAME:latest . --file docker/springboot.Dockerfile #build the docker image
-        
-#       - name: Configure Docker Client
-#         run:  |-
-#           gcloud auth configure-docker --quiet #authenticate to gcr
-        
-#       - name: Push Docker Image to Container Registry GCR
-#         env: 
-#           IMAGE_NAME: teste/springboot
-#           PROJECT_ID: g2w-tecnologia
-#         #tag docker image to gcr image format then push to gcr
-#         run: |-
-#           docker tag $IMAGE_NAME:latest gcr.io/$PROJECT_ID/$IMAGE_NAME:latest 
-#           docker push gcr.io/$PROJECT_ID/$IMAGE_NAME:latest 
+#       - name: Login to GCR
+#         uses: docker/login-action@v2
+#         with:
+#           registry: gcr.io
+#           username: _json_key
+#           password: ${{ secrets.SA_GCP }}
 
-# #       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
-# #         with:
-# #           service_account_key: ${{ secrets.SA_GCP }}
-# #           project_id: g2w-tecnologia
-# #           export_default_credentials: true
-          
-# #       - name: Login to GCR
-# #         uses: docker/login-action@v2
-# #         with:
-# #           registry: gcr.io
-# #           username: _json_key
-# #           password: ${{ secrets.SA_GCP }}
-
-# #       - name: Build the Docker image
-# #         run: docker build . --file docker/springboot.Dockerfile --tag gcr.io/g2w-tecnologia/teste/springboot:1 && docker push gcr.io/g2w-tecnologia/teste/springboot:1
+#       - name: Build the Docker image
+#         run: docker build . --file docker/springboot.Dockerfile --tag gcr.io/g2w-tecnologia/teste/springboot:1 && docker push gcr.io/g2w-tecnologia/teste/springboot:1
