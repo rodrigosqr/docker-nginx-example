@@ -62,6 +62,9 @@ jobs:
 #             password: ${{ secrets.CR_PAT }} #parse the value of repository secret called CR_PAT that we have created earlier
             
       - name: Login to GCR
+        run: echo  ${{ secrets.SA_GCP }}
+        
+      - name: Login to GCR
         env:
           PROJECT_ID: g2w-tecnologia #create env called PROJECT_ID consisted of our actual GCP Project ID
         uses: google-github-actions/setup-gcloud@v0.3.0 #checkouts GCR repo, so this workflow can access it
