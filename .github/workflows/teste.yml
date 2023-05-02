@@ -9,10 +9,12 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      GITHUB_SHORT_SHA: echo ${GITHUB_SHA} | cut -c1-8
     steps:
       - uses: actions/checkout@v3
-        env:
-          GITHUB_SHORT_SHA: echo ${GITHUB_SHA} | cut -c1-8
       - name: Get hash
         run: echo ${GITHUB_SHA}
       - name: Get short hash
