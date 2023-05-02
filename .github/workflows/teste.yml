@@ -11,10 +11,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        env:
+          GITHUB_SHORT_SHA: echo ${GITHUB_SHA} | cut -c1-8
       - name: Get hash
         run: echo ${GITHUB_SHA}
       - name: Get short hash
-        run: echo echo ${GITHUB_SHA} | cut -c1-8
+        run: echo ${GITHUB_SHORT_SHA}
 #       - name: Get tag
 #         id: tag
 #         uses: dawidd6/action-get-tag@v1
