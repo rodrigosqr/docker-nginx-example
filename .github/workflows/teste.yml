@@ -11,14 +11,14 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    env:
-      GITHUB_SHORT_SHA: $(`echo ${GITHUB_SHA} | cut -c1-8`)
     steps:
       - uses: actions/checkout@v3
+      - id: commit
+        uses: pr-mpt/actions-commit-hash@v2
       - name: Get hash
         run: echo ${GITHUB_SHA}
       - name: Get short hash
-        run: echo ${GITHUB_SHORT_SHA}
+        run: echo ${{steps.commit.outputs.short}}
 #       - name: Get tag
 #         id: tag
 #         uses: dawidd6/action-get-tag@v1
